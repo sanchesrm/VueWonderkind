@@ -5,7 +5,19 @@
         Hello World
       </div>
       <div class="contacts-list">
-        test
+        {{ this.letter = 'A' }}
+        
+        
+        {{ this.letter }}
+        <ul v-for="(item, index) in this.contacts">
+          <li>
+            
+            {{ this.letter = 'C' }}
+          </li>
+          <li>
+            {{ item.name }}
+          </li>
+        </ul>
       </div>
       <div class="add-contact">
         add contact
@@ -21,7 +33,8 @@
     name: 'app',
     data () {
       return {
-        contacts: VueCookie.get(`contacts`)
+        contacts: JSON.parse(VueCookie.get(`contacts`)),
+        letter: 'b'
       }
     }
   }
@@ -45,6 +58,28 @@
   code::before, code::after {
     content: '`';
   }
+  
+  ::-webkit-scrollbar {
+    width: 15px;
+  }
+  ::-webkit-scrollbar-button {
+    width: 15px;
+    height:0px;
+  }
+  ::-webkit-scrollbar-track {
+    background:#eee;
+    border: thin solid lightgray;
+    box-shadow: 0px 0px 3px #dfdfdf inset;
+    border-radius:10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background:#999;
+    border: thin solid gray;
+    border-radius:10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background:#7d7d7d;
+  }
 </style>
 
 <!-- Scoped component css -->
@@ -57,33 +92,31 @@
   .leftside-menu {
     position: absolute;
     float: left;
-    width: 20%;
+    width: 22%;
     height: 100%;
     background-color: #1234;
   }
 
   .search-contacts {
-    position: absolute;
-    float: top;
     width: 100%;
     height: 150px;
+    top: 0;
     background-color: #4321;
   }
 
   .contacts-list {
-    /* position: absolute; */
-    /* width: 100%;
-    height: 180px; */
-    /* height: 90%; */
     width: 100%;
-    margin-top: 150px;
+    top: 150px;
+    bottom: 40px;
+    position: absolute;
     background-color: #987656;
+    overflow-y: scroll;
   }
 
   .add-contact {
     background-color: #ff2311;
+    bottom: 0;
     position: absolute;
-    float: bottom;
     width: 100%;
     height: 40px;
   }
