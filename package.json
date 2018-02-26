@@ -17,6 +17,7 @@
     "email": "sanchesrm@hotmail.com"
   },
   "dependencies": {
+    "bootstrap": "^4.0.0",
     "normalize.css": "^7.0.0",
     "object-assign": "^4.1.1",
     "offline-plugin": "^4.8.0",
@@ -24,10 +25,13 @@
     "vue-cookies": "^1.5.5"
   },
   "devDependencies": {
+    "less": "^3.0.1",
+    "less-loader": "^4.0.5",
+    "node-less": "^1.0.0",
     "poi": "^9.0.0",
     "poi-preset-bundle-report": "^2.0.0",
+    "poi-preset-offline": "^9.0.0",
     "serve": "^6.1.0",
-    "tyu": "^1.0.4",
-    "poi-preset-offline": "^9.0.0"
+    "tyu": "^1.0.4"
   }
 }
