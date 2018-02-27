@@ -26,8 +26,9 @@
       <div class="header">
         <div v-if="edit">
           <div class="profile-picture">
-            <input ref="fileInput" type="file" id="profilePicture" accept="image/*" @change="onFileChange">
-            <img >
+            <input ref="fileInput" type="file" id="profilePicture-input" accept="image/*" @change="onFileChange">
+
+            <img :src="selectedContact.profilePicture" onerror="">
             <img class="add-image-btn" v-on:click="selectImage">
           </div>
           <div class="contact-name">
@@ -36,7 +37,7 @@
         </div>
         <div v-else>
           <div class="profile-picture">
-            <img >
+            <img :src="this.selectedContact.profilePicture" onerror="">
           </div>
           <div class="contact-name">
             {{ this.selectedContact.firstName }} {{ this.selectedContact.lastName }}
@@ -107,6 +108,12 @@
       }
     },  
     methods: {
+      watch: {
+        'this.selectedContact.profilePicture': {
+          handler: function(val) { console.log('changed') },
+            deep: true
+        }
+      },
       selectContact: function(item, index) {
         if (this.selectedIndex != null) {
           this.contacts[this.selectedIndex].selected = false;
@@ -137,7 +144,9 @@
 
         reader.readAsDataURL(file)
         reader.onloadend = () => {
-          
+          console.log(reader.result);
+          console.log(this.selectedContact);
+          this.selectedContact.profilePicture = reader.result;
         }
       }
     }
@@ -257,6 +266,7 @@
           height: 150px;
           border-radius: 50%;
           border: 1px solid #5d647a;
+          z-index: 1;
         }
 
         img.add-image-btn {
@@ -267,6 +277,7 @@
           height: 55px;
           border-radius: 50%;
           border: 1px solid #5d647a;
+          z-index: 100;
         }
       }
 
@@ -310,6 +321,12 @@
         font-weight: 600;
       }
 
+    }
+
+    #profilePicture-input {
+      opacity: 0;
+      position: absolute;
+      top: 0;
     }
 
     .save-contact {
