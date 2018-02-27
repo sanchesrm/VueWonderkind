@@ -1,34 +1,37 @@
 <template>
   <div id="app">
-    <div class="leftside-menu">
-      <div class="search-contacts">
-        <div class="label lightgray">Contacts</div>
-        <input placeholder="Search" />
-      </div>
-      <div class="contacts-list">
-        <div v-for="(item, index) in this.contacts"> 
-          <div v-if="item.lastName[0] != lastLetter" class="item-list lightgray letter">
-            {{ lastLetter = item.lastName[0] }}
-          </div>
-          <div class="item-list">
-            <span class="bold">{{ item.lastName }}</span>, {{ item.firstName }}
+    <div class="leftside-menu lightgrayBackground">
+      <div v-if="!edit">
+        <div class="search-contacts">
+          <div class="label lightgray">Contacts</div>
+          <input placeholder="Search" />
+        </div>
+        <div class="contacts-list">
+          <div v-for="(item, index) in this.contacts"> 
+            <div v-if="item.lastName[0] != lastLetter" class="item-list lightgray letter">
+              {{ lastLetter = item.lastName[0] }}
+            </div>
+            <div class="item-list" v-on:click="selectContact(item, index)" :class="{lightgrayBackground:item.selected}">
+              <span class="bold">{{ item.lastName }}</span>, {{ item.firstName }}
+            </div>
           </div>
         </div>
-      </div>
-      <div class="add-contact">
-        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-        <label class="add-contact-label">ADD CONTACT</label>
+        <div class="add-contact">
+          <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+          <label class="add-contact-label">ADD CONTACT</label>
+        </div>
       </div>
     </div>
-    <div class="main-content">
+    <div class="main-content" v-if="selectedContact">
       <div class="header">
         <div v-if="edit">
           <div class="profile-picture">
+            <input ref="fileInput" type="file" id="profilePicture" accept="image/*" @change="onFileChange">
             <img >
-            <img class="add-image-btn">
+            <img class="add-image-btn" v-on:click="selectImage">
           </div>
           <div class="contact-name">
-            <input type="text" placeholder="Name" required>
+            <input type="text" placeholder="Name" :value='this.selectedContact.firstName+" "+this.selectedContact.lastName'  required>
           </div>
         </div>
         <div v-else>
@@ -36,46 +39,52 @@
             <img >
           </div>
           <div class="contact-name">
-            Amar Muric
+            {{ this.selectedContact.firstName }} {{ this.selectedContact.lastName }}
           </div>
           <div class="buttons">
-            <button>A</button>
+            <button v-on:click="editContact()">A</button>
             <button>b</button>
           </div>
         </div>
       </div>
-      <div class="body-content">
-        <div v-if="edit">
-          <div class="label bold lightgray">
-            Email
+        <div class="body-content">
+          <div v-if="edit">
+            <div class="label bold lightgray">
+              Email
+            </div>
+            <div class="label lightgray">
+              <input type="email" placeholder="Email" v-model="this.selectedContact.email" required>
+            </div>
+            <div class="label bold lightgray">
+              Mobile
+            </div>
+            <div class="label"  v-for="(phones, index) in this.selectedContact.mobile">
+              <input type="text" placeholder="Phone" :value="phones" required>
+            </div>
+
+            <div class="add-input-field lightgray" v-on:click="addInputField">
+              Add input field
+            </div>
+
           </div>
-          <div class="label lightgray">
-            <input type="email" placeholder="Email" required>
-          </div>
-          <div class="label bold lightgray">
-            Mobile
-          </div>
-          <div class="label">
-            <input type="text" placeholder="Phone" required>
+          <div v-else>
+            <div class="label bold lightgray">
+              Email
+            </div>
+            <div class="label lightgray">
+              {{ this.selectedContact.email }}
+            </div>
+            <div class="label bold lightgray">
+              Mobile
+            </div>
+            <div class="label lightgray" v-for="(phones, index) in this.selectedContact.mobile">
+              {{ phones }}
+            </div>
           </div>
 
-          <div class="add-input-field lightgray">
-            Add input field
-          </div>
         </div>
-        <div v-else>
-          <div class="label bold lightgray">
-            Email
-          </div>
-          <div class="label lightgray">
-            amar.muric@wonderkind.com
-          </div>
-          <div class="label bold lightgray">
-            Mobile
-          </div>
-          <div class="label lightgray">
-            06-12345678
-          </div>
+        <div class="save-contact" v-if="edit" v-on:click="saveChanges">
+          <label class="save-contact-label">SAVE CHANGES</label>
         </div>
       </div>
     </div>
@@ -91,15 +100,46 @@
     data () {
       return {
         contacts: JSON.parse(VueCookie.get(`contacts`)),
-        edit: true,
-        lastLetter: ''
+        edit: false,
+        lastLetter: '',
+        selectedContact: null,
+        selectedIndex: null
       }
-    }, 
-    computed: {
-
-    },
+    },  
     methods: {
-      
+      selectContact: function(item, index) {
+        if (this.selectedIndex != null) {
+          this.contacts[this.selectedIndex].selected = false;
+        }
+
+        this.selectedContact = item;
+        this.selectedContact.selected = true;
+        this.selectedIndex = index;
+      },
+      editContact: function(index) {
+        this.edit = true;
+      },
+      addInputField: function() {
+        this.selectedContact.mobile.push("");
+      },
+      saveChanges: function() {
+        this.edit = false;
+      },
+      selectImage: function () {
+        this.$refs.fileInput.click()
+      },
+      onFileChange: function(e, prefill) {
+
+        e.preventDefault();
+
+        var reader = new FileReader();
+        var file = e.target.files[0];
+
+        reader.readAsDataURL(file)
+        reader.onloadend = () => {
+          
+        }
+      }
     }
   }
 </script>
@@ -113,6 +153,10 @@
 
   .lightgray {
     color: #5d647a;
+  }
+
+  .lightgrayBackground {
+    background-color: rgba(93, 100, 122, 0.15);
   }
 
   .leftside-menu {
@@ -158,7 +202,7 @@
 
       .item-list {
         font-size: 20px;
-        padding: 15px 0px 0px 30px;
+        padding: 8px 0px 8px 30px;
 
         .letter {
           font-weight: 700;
@@ -265,7 +309,28 @@
         font-size: 20px;
         font-weight: 600;
       }
+
     }
+
+    .save-contact {
+      background-color: #5dbf49;
+      color: #fff;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      position: relative;
+      position: fixed;
+      bottom: 0;
+      left: 26rem;
+      right: 0;
+
+      .save-contact-label {
+        font-size: 18px;
+        font-weight: 500;
+        vertical-align: middle;
+      }
+    }
+
   }
 </style>
 
