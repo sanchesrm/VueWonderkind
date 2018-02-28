@@ -14,7 +14,8 @@ if (!VueCookie.get('contacts')) {
       profilePicture: 'data:image/png;base64,',
       email: "lonneke.faber@wonderkind.com",
       mobile: [
-        "06-12345678"
+        "06-12345678",
+        "98-76543210"
       ]
     },
     {

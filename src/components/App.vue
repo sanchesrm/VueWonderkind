@@ -16,7 +16,7 @@
             </div>
           </div>
         </div>
-        <div class="add-contact">
+        <div class="add-contact" v-on:click="addContact">
           <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
           <label class="add-contact-label">ADD CONTACT</label>
         </div>
@@ -32,7 +32,7 @@
             <img class="add-image-btn" v-on:click="selectImage">
           </div>
           <div class="contact-name">
-            <input type="text" placeholder="Name" :value='this.selectedContact.firstName+" "+this.selectedContact.lastName'  required>
+            <input type="text" placeholder="Name" ref="NameField" :value='this.selectedContact.firstName+" "+this.selectedContact.lastName'  required>
           </div>
         </div>
         <div v-else>
@@ -59,8 +59,8 @@
             <div class="label bold lightgray">
               Mobile
             </div>
-            <div class="label"  v-for="(phones, index) in this.selectedContact.mobile">
-              <input type="text" placeholder="Phone" :value="phones" required>
+            <div class="label" v-for="(mobile, index) in this.selectedContact.mobile">
+              <input type="text" placeholder="Phone" v-model="selectedContact.mobile[index]" required>
             </div>
 
             <div class="add-input-field lightgray" v-on:click="addInputField">
@@ -131,6 +131,11 @@
       },
       saveChanges: function() {
         this.edit = false;
+        this.contacts[this.selectedIndex].selected = false;        
+        this.contacts[this.selectedIndex] = this.selectedContact;
+
+        VueCookie.set('contacts', JSON.stringify(this.contacts));
+        this.selectedContact = null;
       },
       selectImage: function () {
         this.$refs.fileInput.click()
@@ -144,10 +149,13 @@
 
         reader.readAsDataURL(file)
         reader.onloadend = () => {
-          console.log(reader.result);
-          console.log(this.selectedContact);
           this.selectedContact.profilePicture = reader.result;
         }
+      },
+      addContact: function() {
+        this.edit = true;
+        this.selectedContact = {firstName: "", lastName: "", profilePicture: "", mobile: [""], email:"", selected: true};
+        this.$refs.NameField.focus();
       }
     }
   }
