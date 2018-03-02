@@ -28,7 +28,8 @@
           <div class="profile-picture">
             <input ref="fileInput" type="file" id="profilePicture-input" accept="image/*" @change="onFileChange">
 
-            <img :src="selectedContact.profilePicture" onerror="">
+            <!-- <img :src="selectedContact.profilePicture" onerror="this.src='/static/profile_picture.png';" /> -->
+            <img src="/static/profile_picture.png" />
             <img class="add-image-btn" v-on:click="selectImage">
           </div>
           <div class="contact-name">
