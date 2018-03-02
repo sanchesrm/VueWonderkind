@@ -9,7 +9,7 @@
         <div class="contacts-list">
           <div v-for="(item, index) in this.contacts"> 
             <div v-if="item.lastName[0] != lastLetter" class="item-list lightgray letter">
-              {{ lastLetter = item.lastName[0] }}
+              {{ lastLetter = item.lastName[0].toUpperCase() }}
             </div>
             <div class="item-list" v-on:click="selectContact(item, index)" :class="{lightgrayBackground:item.selected}">
               <span class="bold">{{ item.lastName }}</span>, {{ item.firstName }}
@@ -32,7 +32,7 @@
             <img class="add-image-btn" v-on:click="selectImage">
           </div>
           <div class="contact-name">
-            <input type="text" placeholder="Name" ref="NameField" :value='this.selectedContact.firstName+" "+this.selectedContact.lastName'  required>
+            <input type="text" placeholder="Name" v-model="selectedContact.fullName" required>
           </div>
         </div>
         <div v-else>
@@ -40,11 +40,11 @@
             <img :src="this.selectedContact.profilePicture" onerror="">
           </div>
           <div class="contact-name">
-            {{ this.selectedContact.firstName }} {{ this.selectedContact.lastName }}
+            {{ this.selectedContact.fullName }}
           </div>
           <div class="buttons">
             <button v-on:click="editContact()">A</button>
-            <button>b</button>
+            <button v-on:click="removeContact()">b</button>
           </div>
         </div>
       </div>
@@ -54,7 +54,7 @@
               Email
             </div>
             <div class="label lightgray">
-              <input type="email" placeholder="Email" v-model="this.selectedContact.email" required>
+              <input type="email" placeholder="Email" v-model="selectedContact.email" required>
             </div>
             <div class="label bold lightgray">
               Mobile
@@ -98,9 +98,12 @@
 
   export default {
     name: 'app',
+    mounted: function () {
+      this.contacts = JSON.parse(VueCookie.get('contacts'));
+    },
     data () {
       return {
-        contacts: JSON.parse(VueCookie.get(`contacts`)),
+        contacts: {},
         edit: false,
         lastLetter: '',
         selectedContact: null,
@@ -108,12 +111,6 @@
       }
     },  
     methods: {
-      watch: {
-        'this.selectedContact.profilePicture': {
-          handler: function(val) { console.log('changed') },
-            deep: true
-        }
-      },
       selectContact: function(item, index) {
         if (this.selectedIndex != null) {
           this.contacts[this.selectedIndex].selected = false;
@@ -123,16 +120,29 @@
         this.selectedContact.selected = true;
         this.selectedIndex = index;
       },
-      editContact: function(index) {
+      editContact: function() {
         this.edit = true;
+      },
+      removeContact: function() {
+        this.contacts.splice(this.selectedIndex, 1);
+        VueCookie.set('contacts', JSON.stringify(this.contacts));
+        this.selectedContact = null;
       },
       addInputField: function() {
         this.selectedContact.mobile.push("");
       },
       saveChanges: function() {
         this.edit = false;
-        this.contacts[this.selectedIndex].selected = false;        
+
+        this.selectedContact.firstName = this.selectedContact.fullName.split(' ').slice(0, -1).join(' ');
+        this.selectedContact.lastName = this.selectedContact.fullName.split(' ').slice(-1).join(' ');
+
+        this.selectedContact.selected = false;         
         this.contacts[this.selectedIndex] = this.selectedContact;
+
+        this.contacts.sort(function(a, b) {
+          return a.lastName.localeCompare(b.lastName);
+        });
 
         VueCookie.set('contacts', JSON.stringify(this.contacts));
         this.selectedContact = null;
@@ -154,8 +164,10 @@
       },
       addContact: function() {
         this.edit = true;
-        this.selectedContact = {firstName: "", lastName: "", profilePicture: "", mobile: [""], email:"", selected: true};
-        this.$refs.NameField.focus();
+        console.log(this.contacts.length);
+        this.selectedIndex = this.contacts.length;
+
+        this.selectedContact = {fullName: "", firstName: "", lastName: "", profilePicture: "", mobile: [""], email:"", selected: true};
       }
     }
   }

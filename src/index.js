@@ -9,6 +9,7 @@ Vue.config.productionTip = false
 if (!VueCookie.get('contacts')) {
   VueCookie.set('contacts', JSON.stringify([
     {
+      fullName: "Lonneke Faber",
       firstName: "Lonneke",
       lastName: "Faber",
       profilePicture: 'data:image/png;base64,',
@@ -19,6 +20,7 @@ if (!VueCookie.get('contacts')) {
       ]
     },
     {
+      fullName: "Don Kooijman",
       firstName: "Don",
       lastName: "Kooijman",
       profilePicture: 'data:image/png;base64,',
@@ -28,6 +30,7 @@ if (!VueCookie.get('contacts')) {
       ]
     },
     {
+      fullName: "Amar Muric",
       firstName: "Amar",
       lastName: "Muric",
       profilePicture: 'data:image/png;base64,',
