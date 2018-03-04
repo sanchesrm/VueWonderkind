@@ -1,9 +1,16 @@
 import Vue from 'vue'
-import App from './components/App.vue'
+import VueRouter from 'vue-router'
 import VueCookie from 'vue-cookies'
+import VuejsDialog from "vuejs-dialog"
+import App from './components/App.vue'
+import LeftSideMenu from './components/LeftSideMenu.vue'
+import MainContent from './components/MainContent.vue'
+import AddEditContact from './components/AddEditContact.vue'
 import './fonts.css'
 
 Vue.use(VueCookie);
+Vue.use(VueRouter);
+Vue.use(VuejsDialog);
 Vue.config.productionTip = false
 
 if (!VueCookie.get('contacts')) {
@@ -39,10 +46,43 @@ if (!VueCookie.get('contacts')) {
         "06-12345678"
       ]
     }
-  ]));
+  ]), -1, "/");
 }
 
+const router = new VueRouter({
+  mode: 'history',
+  routes: [
+    {
+      path: '/',
+      components: {
+        leftSideMenu: LeftSideMenu
+      }   
+    }, {
+      path: "/contact/:contact_index",
+      components: {
+        leftSideMenu: LeftSideMenu,
+        mainContent: MainContent
+      }
+    }, {
+      path: "/edit/:contact_index",
+      components: {
+        mainContent: AddEditContact
+      }
+    }, {
+      path: "/addNewContact",
+      components: {
+        mainContent: AddEditContact
+      }
+    }
+  ]
+}); 
+
 new Vue({
+  router: router,
   el: '#app',
   render: h => h(App)
-})
+});
+// new Vue({
+//   el: '#app',
+//   render: h => h(App)
+// }) 

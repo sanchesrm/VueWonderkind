@@ -22,7 +22,9 @@
     "object-assign": "^4.1.1",
     "offline-plugin": "^4.8.0",
     "promise-polyfill": "^6.0.2",
-    "vue-cookies": "^1.5.5"
+    "vue-cookies": "^1.5.5",
+    "vue-router": "^3.0.1",
+    "vuejs-dialog": "^0.6.1"
   },
   "devDependencies": {
     "less": "^3.0.1",
